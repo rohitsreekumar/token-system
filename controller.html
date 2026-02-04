@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Token Controller</title>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 40px;
+    }
+    button {
+      font-size: 22px;
+      padding: 12px 25px;
+      margin: 10px;
+    }
+    input {
+      font-size: 20px;
+      width: 120px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Token Controller</h1>
+<h2>Current Token: <span id="token">0</span></h2>
+
+<button onclick="prev()">Previous</button>
+<button onclick="next()">Next</button>
+<br><br>
+
+<input type="number" id="manual" placeholder="Token No">
+<button onclick="setManual()">Set</button>
+
+<script>
+  // ✅ Firebase Configuration (YOUR PROJECT)
+  const firebaseConfig = {
+    apiKey: "AIzaSyDrkQuMiKfZC_NJqdKD87oHBsi-6P02t5g",
+    authDomain: "token-system-b2122.firebaseapp.com",
+    databaseURL: "https://token-system-b2122-default-rtdb.firebaseio.com",
+    projectId: "token-system-b2122",
+    storageBucket: "token-system-b2122.appspot.com",
+    messagingSenderId: "573600353363",
+    appId: "1:573600353363:web:7c4bec9266b74524610aa6"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const db = firebase.database().ref("token");
+
+  db.on("value", snap => {
+    document.getElementById("token").innerText = snap.val() ?? 0;
+  });
+
+  function next() {
+    db.transaction(v => (v ?? 0) + 1);
+  }
+
+  function prev() {
+    db.transaction(v => Math.max((v ?? 0) - 1, 0));
+  }
+
+  function setManual() {
+    const v = document.getElementById("manual").value;
+    if (v !== "") db.set(parseInt(v));
+  }
+</script>
+
+</body>
+</html>
